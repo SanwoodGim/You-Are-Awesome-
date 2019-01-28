@@ -25,22 +25,14 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
-    func nonRepeatingRandom(lastNumber: Int, maxValue: Int) -> Int {
-        var newIndex: Int
-        repeat {
-            newIndex = Int.random(in: 0..<maxValue)
-        } while  lastNumber == newIndex
-        return newIndex
-    }
     
-    func playSound(soundName: String) {
+    func playSound(soundName: String, audioPlayer: inout AVAudioPlayer) {
         //Can we load in the file soundName?
         if let sound = NSDataAsset(name: soundName){
             //check if sound.data is a sound file
             do {
-                try awesomePlayer = AVAudioPlayer(data: sound.data)
-                awesomePlayer.play()
+                try audioPlayer = AVAudioPlayer(data: sound.data)
+                audioPlayer.play()
             } catch {
                 //if  sound.data is not a valid sound file
                 print("ERROR: data in \(soundName) couldn't be played as a sound")
@@ -49,6 +41,14 @@ class ViewController: UIViewController {
             //If reading in the NSDataAsset didn't work, tell the user/report error.
             print("ERROR: file \(soundName) didn't load")
         }
+    }
+    
+    func nonRepeatingRandom(lastNumber: Int, maxValue: Int) -> Int {
+        var newIndex: Int
+        repeat {
+            newIndex = Int.random(in: 0..<maxValue)
+        } while  lastNumber == newIndex
+        return newIndex
     }
     
     @IBAction func showMessagePressed(_ sender: UIButton) {
@@ -75,11 +75,10 @@ class ViewController: UIViewController {
         
         //Get a random number to use in our soundName file
         soundIndex = nonRepeatingRandom(lastNumber: soundIndex, maxValue: numberOfSounds)
-        soundIndex = newIndex
         
         //Play a sound
-        let soundName = "sound \(soundIndex)"
-        playSound(soundName: soundName)
+        let soundName = "sound\(soundIndex)"
+        playSound(soundName: soundName, audioPlayer: &awesomePlayer)
     }
 }
 
